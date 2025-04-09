@@ -17,8 +17,8 @@ This assignment has two parts:
 ### Tasks
 
 - Fix the provided buggy scripts:
-  - `patient_data_cleaner.py` (cleans and filters patient records)
-  - `med_dosage_calculator.py` (calculates medication dosages)
+  - `1_patient_data_cleaner.py` (cleans and filters patient records)
+  - `2_med_dosage_calculator.py` (calculates medication dosages)
 - The first script has labeled bugs to help you get started
 - The second script has more subtle bugs that require using a debugger to find
 - Use **any debugging method you prefer**:
@@ -47,7 +47,7 @@ This assignment has two parts:
 ### Tasks
 
 1. **Patient Cohort Analysis**:
-   - Complete the `cohort_analysis.py` script to analyze patient data
+   - Complete the `3_cohort_analysis.py` script to analyze patient data
    - Use polars' lazy evaluation and streaming capabilities
    - Convert the input CSV to a parquet file for efficient processing
    - Filter out BMI outliers (values < 10 or > 60)
