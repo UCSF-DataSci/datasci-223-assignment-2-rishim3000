@@ -40,6 +40,9 @@ Usage:
 
 import json
 import os
+import pdb
+import pandas as pd
+import sys
 
 def load_patient_data(filepath):
     """
@@ -51,30 +54,54 @@ def load_patient_data(filepath):
     Returns:
         list: List of patient dictionaries
     """
-    with open(filepath, 'r') as file:
-        return json.load(file)
+    try:
+        with open(filepath, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print(f'Failed to load data')
+        sys.exit(1)
 
-def clean_patient_data(data: dict) -> dict:
+def clean_patient_data(patients):
     """
-    Clean and validate patient data.
-    
+    Clean patient data using pandas:
+    - Capitalize names
+    - Convert ages to integers
+    - Filter out patients under 18
+    - Remove duplicates
+
     Args:
-        data: Dictionary containing patient information
-        
+        patients (list): List of patient dictionaries
+
     Returns:
-        Cleaned patient data dictionary
+        list: Cleaned list of patient dictionaries
     """
-    # TODO: Fix the bugs in this function
-    # Hint: Look for these common issues:
-    # 1. Type conversion errors (str vs int)
-    # 2. Missing key checks
-    # 3. Invalid value ranges
-    # 4. Incorrect string operations
-    
-    # BUG: Add your bug description here
-    # FIX: Add your fix description here
-    
-    return data
+
+    df = pd.DataFrame(patients)
+
+    # BUG: Limit to required columns
+    # FIX: Fill missing columns if necessary
+    required_columns = ['name', 'age', 'gender', 'diagnosis']
+    for col in required_columns:
+        if col not in df.columns:
+            df[col] = None
+ 
+    # BUG: Duplicates need to be dropped
+    # FIX: Drop duplicates
+    df = df.drop_duplicates()
+
+    # BUG: Underage patients not filtered out
+    # FIX: Filter out underage (>18) patients
+    df  = df[df['age'] >= 18]
+
+    # BUG: Age strings not always valid integers
+    # FIX: Convert to numeric, NaNs filled with 0
+    df['age'] = pd.to_numeric(df['age'], errors='coerce').fillna(0).astype(int)
+
+    # BUG: Names are not capitalized
+    # FIX: Capitalize name
+    df['name'] = df['name'].fillna('').apply(lambda x: x.title())
+
+    return df.to_dict(orient = 'records')
 
 def main():
     """Main function to run the script."""
@@ -89,6 +116,10 @@ def main():
     
     # Clean the patient data
     cleaned_patients = clean_patient_data(patients)
+
+    if not cleaned_patients:
+        print("No valid patient records found.")
+        return []
     
     # Print the cleaned patient data
     print("Cleaned Patient Data:")
