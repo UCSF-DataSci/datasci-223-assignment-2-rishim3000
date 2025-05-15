@@ -67,17 +67,32 @@ def clean_patient_data(patients):
     Returns:
         Cleaned patient data dictionary
     """
-    # TODO: Fix the bugs in this function
-    # Hint: Look for these common issues:
-    # 1. Type conversion errors (str vs int)
-    # 2. Missing key checks
-    # 3. Invalid value ranges
-    # 4. Incorrect string operations
+    df = pd.DataFrame(patients)
+
+    # BUG: Required columns not specified
+    # FIX: Specify required columns
+    required_columns = ['name', 'age', 'gender', 'diagnosis']
+    for col in required_columns:
+        if col not in df.columns:
+            df[col] = None
+
+    # BUG: Duplicates not dropped
+    # FIX: Drop duplicates
+    df = df.drop_duplicates()
+
+    # BUG: Underage patients are not excluded
+    # FIX: Filter out underage patients
+    df = df[df['age'] >= 18]
+
+    #BUG: Names are not capitalized properly
+    # FIX: Capitalize each word in name
+    df['name'] = df['name'].fillna('').apply(lambda x: x.title())
+
+    # BUG: Ages not proper integers
+    # FIX: Convert to numeric, NaNs replaced with 0
+    df['age'] = pd.to_numeric(df['age'], errors='coerce').fillna(0).astype(int)
     
-    # BUG: Add your bug description here
-    # FIX: Add your fix description here
-    
-    return data
+    return df.to_dict(orient = 'records')
 
 def main():
     """Main function to run the script."""
@@ -97,7 +112,6 @@ def main():
         print("No valid patient records found.")
         return []
     
-    # BUG: No check if cleaned_patients is None
     # Print the cleaned patient data
     print("Cleaned Patient Data:")
     for patient in cleaned_patients:
